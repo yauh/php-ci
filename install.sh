@@ -64,7 +64,7 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 expect <<- DONE
   set timeout -1
 
-  spawn /usr/local/bin/ansible-playbook /tmp/php-ci/bootstrap.yml -i /tmp/php-ci/ci-hosts -k -vvv
+  spawn /usr/local/bin/ansible-playbook /tmp/php-ci/bootstrap.yml -i /tmp/php-ci/ci-hosts -k
 
   # Wait for password prompt
   expect "*?assword:*"
