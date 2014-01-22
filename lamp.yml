@@ -2,6 +2,6 @@
 # file: lamp.yml
 - hosts: lamp
   sudo: True
-  user: {{ bootstrap_user }}
+  user: "{{ bootstrap_user }}"
   roles:
     - lamp

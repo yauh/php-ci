@@ -2,6 +2,6 @@
 # file: php-ci.yml
 - hosts: ci
   sudo: True
-  user: {{ bootstrap_user }}
+  user: "{{ bootstrap_user }}"
   roles:
     - php-ci
