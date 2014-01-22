@@ -58,11 +58,11 @@ easy_install pip
 pip install paramiko PyYAML jinja2 httplib2
 pip install ansible
 
-# clone the php-ci repository to /tmp
+# clone the php-ci repository to /tmp or git pull if already present
 cd /tmp
 git clone https://github.com/perlmonkey/php-ci.git || cd /tmp/php-ci && git pull
 
-# Perform the ansible playbook using the root passwort given above
+# Perform the ansible playbook using the root password given above
 export ANSIBLE_HOST_KEY_CHECKING=False
 expect <<- DONE
   set timeout -1
@@ -76,4 +76,4 @@ expect <<- DONE
 
   expect eof
 DONE
-echo "All done, enjoy your new PHP-CI environment on port 8080"
+echo "All done, hopefully you can enjoy your new PHP-CI environment on port 8080 now"
