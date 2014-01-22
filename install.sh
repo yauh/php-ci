@@ -7,18 +7,23 @@
 # * connection to the internet from the machine
 # * (optional) firewall to prevent users form the internet to access the machine directly
 
-echo "****************************************"
-echo "* Setting up this computer as a PHP-CI *"
-echo "****************************************"
-echo "Do you want to continue? (y/n)"
+clear
+echo "*********************************************"
+echo "* Setting up this computer as a PHP-CI      *"
+echo "* Like described at http://jenkins-php.org/ *"
+echo "* * * * * * * * * WARNING * * * * * * * * * *"
+echo "* Please make sure this machine cannot be   *"
+echo "* accessed from the internet                *"
+echo "* Or that you harden it after the install   *"
+echo "*********************************************"
+echo "Do you really want to continue? (y/n)"
 read letsgo
 
 if  [ $letsgo == y ]; then
-  echo "Ok, grab a cup of coffee, give me a couple of minutes"
   # We expect the root user to be used for this action
   # also the machine must accept root to connect using ssh and a password
   PASS="password"
-  echo "Please enter the root password to access this machine: "
+  echo "Great. Now please enter the root password to access this machine: "
   read PASS
 else
   echo "Nothing to be done."
@@ -43,7 +48,7 @@ expect <<- SSHTESTEND
     expect eof
 SSHTESTEND
 
-echo "ssh can connect, that's good!"
+echo "For the record: ssh can connect, hooray"
 echo "Ok, now grab a cup of coffee, give me a couple of minutes to set things up"
 
 # Install all other requirements
