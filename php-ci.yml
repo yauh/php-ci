@@ -2,6 +2,6 @@
 # file: php-ci.yml
 - hosts: ci
   sudo: True
-  user: kaylee
+  user: root
   roles:
     - php-ci
