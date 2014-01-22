@@ -2,6 +2,6 @@
 # file: lamp.yml
 - hosts: lamp
   sudo: True
-  user: myuser
+  user: root
   roles:
     - lamp
