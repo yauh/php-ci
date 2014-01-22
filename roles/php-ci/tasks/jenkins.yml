@@ -33,6 +33,7 @@
       - php5-dev
       - ant
       - curl
+      - php5-xdebug
   tags: php-ci
   
 - command: pear config-set auto_discover 1
@@ -84,7 +85,13 @@
 - command: pear install --alldeps pear.phpunit.de/phpcpd
   ignore_errors: yes
   tags: php-ci
-- command: pear install --force --alldeps pear.phpunit.de/PHPUnit
+- command: pear install --force --alldeps pear.phpunit.de/DbUnit
+  ignore_errors: yes
+  tags: php-ci
+- command: pear install --force --alldeps pear.phpunit.de/PHPUnit_MockObject
+  ignore_errors: yes
+  tags: php-ci
+- command: pear install --force --alldeps pear.phpunit.de/PHPUnit_Story
   ignore_errors: yes
   tags: php-ci
 - command: pear install PHP_CodeSniffer
@@ -125,13 +132,10 @@
   tags: php-ci
 
 - file: path=/var/lib/jenkins/jobs/php-template state=directory owner=jenkins
-  ignore_errors: yes
   tags: php-ci
 - copy: src=config.xml dest=/var/lib/jenkins/jobs/php-template/config.xml owner=jenkins
-  ignore_errors: yes
   tags: php-ci
 - action: command java -jar jenkins-cli.jar -s http://localhost:8080 reload-configuration
-  notify: restart jenkins
   tags: php-ci
 
 - wait_for: port=8080 delay=20

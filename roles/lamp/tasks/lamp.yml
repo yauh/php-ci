@@ -93,7 +93,7 @@
   action: template src=roles/lamp/templates/php.ini.j2 dest=/etc/php5/apache2/php.ini owner=root group=root mode=0755
   tags: lamp
 
-- name: Sites | Configuration file for our site
+- name: Configuration file for our site
   action: template src=roles/lamp/templates/001-yiisite.j2 dest=/etc/apache2/sites-available/001-yiisite
   tags: lamp
 
