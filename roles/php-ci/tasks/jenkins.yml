@@ -133,3 +133,11 @@
 - action: command java -jar jenkins-cli.jar -s http://localhost:8080 reload-configuration
   notify: restart jenkins
   tags: php-ci
+
+- wait_for: port=8080 delay=20
+  tags: php-ci
+  
+- name: Start the demo build
+  action: command java -jar jenkins-cli.jar -s http://localhost:8080 build "php-template"
+  ignore_errors: yes
+  tags: php-ci
