@@ -58,7 +58,7 @@
   tags: lamp
     
 - name: update mysql root password for all root accounts
-  mysql_user: name=root host={{ item }} password={{ lamp.mysql.root_password }} login_user=root login_password={{ lamp.mysql.root_password }}
+  mysql_user: name=root host={{ item }} password={{ lamp.mysql.root_password }} login_user=root login_password={{ lamp.mysql.root_password }} check_implicit_admin
   with_items:
       - "{{ ansible_hostname }}"
       - 127.0.0.1
