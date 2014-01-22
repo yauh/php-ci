@@ -3,5 +3,5 @@
 - hosts: lamp
   sudo: True
   user: myuser
-    roles:
+  roles:
     - lamp
