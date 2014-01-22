@@ -109,17 +109,14 @@
 
 - name: Workaround for updates issues with CLI
   action: command chown -R jenkins:nogroup /var/lib/jenkins/updates
-  tags: php-ci
-
-- name: Get Jenkins cli
-  action: command wget http://localhost:8080/jnlpJars/jenkins-cli.jar
-  tags: php-ci
-
-- name: Restart Jenkins gently
-  action: command java -jar jenkins-cli.jar -s http://localhost:8080 safe-restart
+  notify: restart jenkins
   tags: php-ci
 
 - wait_for: port=8080 delay=20
+  tags: php-ci
+  
+- name: Get Jenkins cli
+  action: command wget http://localhost:8080/jnlpJars/jenkins-cli.jar
   tags: php-ci
 
 - name: Get Jenkins plugins
@@ -134,9 +131,5 @@
   ignore_errors: yes
   tags: php-ci
 - action: command java -jar jenkins-cli.jar -s http://localhost:8080 reload-configuration
+  notify: restart jenkins
   tags: php-ci
-  
-- name: Restart Jenkins gently
-  action: command java -jar jenkins-cli.jar -s http://localhost:8080 safe-restart
-  tags: php-ci
-
