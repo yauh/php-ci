@@ -32,28 +32,26 @@ fi
 
 # Install ssh software on a minimal Debian system
 #apt-get update
-apt-get -y install ssh
-echo $PASS
+apt-get -y install ssh sshpass
+
 # check if ssh access works
-expect <<- SSHTESTEND
-    set timeout 2
+export SSH_CONNECT=false
+sshpass  -p $PASS ssh -o StrictHostKeyChecking=no root@127.0.0.1 cat /etc/hostname && export SSH_CONNECT=true
 
-    spawn ssh -o StrictHostKeyChecking=no root@127.0.0.1 cat /etc/hostname
+echo $SSH_CONNECT
+if  [ $SSH_CONNECT == false ]; then
+  echo "Nothing can be done, ssh connection not possible (was your password correct?)"
+  exit 1
+elif [ $SSH_CONNECT == true ]; then
+  echo "For the record: ssh can connect, hooray"
+else
+  exit 1
+fi
 
-    # Wait for password prompt
-    expect "*?assword:*"
-    # Send password aka $PASS
-    send -- "$PASS\r"
-
-    expect eof
-SSHTESTEND
-
-echo "For the record: ssh can connect, hooray"
 echo "Ok, now grab a cup of coffee, give me a couple of minutes to set things up"
 
-# Install all other requirements
-apt-get -y install sudo sshpass autoconf expect gcc python python-all python-all-dev python-setuptools git
-
+# Install all package requirements
+apt-get -y install sudo expect autoconf gcc python python-all python-all-dev python-setuptools git
 
 # Install Ansible using pip
 easy_install pip
@@ -64,7 +62,7 @@ pip install ansible
 cd /tmp
 git clone https://github.com/perlmonkey/php-ci.git || cd /tmp/php-ci && git pull
 
-# Perform the ansible playbook using the passwort given
+# Perform the ansible playbook using the root passwort given above
 export ANSIBLE_HOST_KEY_CHECKING=False
 expect <<- DONE
   set timeout -1
@@ -78,5 +76,4 @@ expect <<- DONE
 
   expect eof
 DONE
-
 echo "All done, enjoy your new PHP-CI environment on port 8080"
