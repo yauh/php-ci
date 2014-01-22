@@ -1,0 +1,33 @@
+---
+- hosts: all
+  user: root
+
+  vars:
+     user: myuser
+     user_password: $1$pHp_Ci$uEOPxMNh/UUitDeD.2Tyd0
+
+  tasks:
+     - name: "Init | Set up an account"
+       user: home=/home/{{ user }} name={{ user }} groups=sudo password={{ user_password }} shell=/bin/bash state=present
+
+     - name: "Init | Add RSA key to the remote host"
+       authorized_key: user='{{ user }}' key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+     - name: "Init | Update apt-get"
+       apt: update_cache=yes
+       
+     - name: Init | Freshen up all packages
+       apt: upgrade=dist
+
+     - name: "Init | Some software should be installed"
+       action: apt pkg={{ item }} state=latest
+       with_items:
+          - sudo
+          - vim
+          - tree
+          - locate
+          - facter
+          - screen
+
+     - name: "Init | Enable sudo without password (removes need for -K)"
+       action: "lineinfile dest=/etc/sudoers state=present regexp='^%sudo' line='%sudo ALL=(ALL) NOPASSWD: ALL'"

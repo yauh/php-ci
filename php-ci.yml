@@ -1,0 +1,7 @@
+---
+# file: php-ci.yml
+- hosts: ci
+  sudo: True
+  user: kaylee
+  roles:
+    - php-ci

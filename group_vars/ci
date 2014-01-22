@@ -1,0 +1,3 @@
+---
+# file: group_vars/ci
+ci_jenkins: bar

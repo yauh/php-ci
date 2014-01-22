@@ -1,0 +1,37 @@
+---
+lamp:
+  admin_email: mail@example.org
+  timezone: Europe/Berlin
+  apache:
+    port: 80
+    root: /var/www/
+    modules:
+        - alias
+        - auth_basic
+        - autoindex
+        - deflate
+        - dir
+        - env
+        - expires
+        - php5
+        - rewrite
+        - setenvif
+        - status
+        - vhost_alias
+  php:
+    php_version: 5
+    max_execution_time: 30
+    max_input_time: 60
+    memory_limit: 128M
+    upload_max_filesize: 8M
+    allow_url_fopen: On
+    allow_url_include: Off
+    session_cookie_httponly: 1
+    display_errors: Off
+    error_reporting: E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
+  mysql:
+    root_password: password
+    users:
+        - name: ci
+          password: password
+          privs: "cidb.*:ALL"

@@ -1,0 +1,5 @@
+- name: restart mysql
+  action: service name=mysql state=restarted
+     
+- name: restart apache2
+  action: service name=apache2 state=restarted

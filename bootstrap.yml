@@ -1,0 +1,4 @@
+---
+# file: xenbook.yml
+- include: lamp.yml
+- include: php-ci.yml

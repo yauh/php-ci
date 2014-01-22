@@ -1,0 +1,6 @@
+---
+# file: roles/php-ci/tasks/main.yml
+
+- include: jenkins.yml tags=php-cli
+  when: ansible_distribution in [ 'Debian', 'Ubuntu' ]
+  
