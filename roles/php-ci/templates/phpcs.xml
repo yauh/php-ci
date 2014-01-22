@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="Custom Standard">
+<ruleset name="Demo Standard">
 
  <!--
     The name attribute of the ruleset tag is displayed
@@ -8,15 +8,17 @@
     except in this file, so it can contain information for
     developers who may change this file in the future.
  -->
- <description>A custom coding standard</description>
+ <description>A sample coding standard</description>
 
  <!--
     You can hard-code ignore patterns directly into your
     custom standard so you don't have to specify the
     patterns on the command line.
-    
+ -->   
+ 
+ <!--
     The following two tags are equivalent to the command line
-    argument: --ignore=*/tests/*,*/data/*
+    argument: ignore=*/tests/*,*/data/*
  -->
  <exclude-pattern>*/tests/*</exclude-pattern>
  <exclude-pattern>*/data/*</exclude-pattern>
@@ -35,15 +37,18 @@
     directory because it does not exist inside the PHP_CodeSniffer
     install directory.
  -->
+ <!--
  <rule ref="/home/username/standards/mystandard"/>
-
+ -->
  <!--
     Include everything in another ruleset.xml file. This is
     really handy if you want to customise another developer's
     custom standard. They just need to distribute their single
     ruleset file to allow this.
  -->
+ <!--
  <rule ref="/home/username/standards/custom.xml"/>
+ -->
 
  <!--
     Include all sniffs in the Squiz standard except one. Note that
@@ -125,11 +130,13 @@
     to specify the end of line character that your standard
     should check for.
  -->
+ <!--
  <rule ref="Generic.Files.LineEndings">
   <properties>
    <property name="eolChar" value="\r\n"/>
   </properties>
  </rule>
+ -->
 
  <!--
     Boolean values should be specified by using the strings
