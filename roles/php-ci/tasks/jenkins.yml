@@ -131,9 +131,9 @@
   ignore_errors: yes
   tags: php-ci
 
-- file: path=/var/lib/jenkins/jobs/php-template state=directory owner=jenkins
+- file: path=/var/lib/jenkins/jobs/yii-sample-project state=directory owner=jenkins
   tags: php-ci
-- copy: src=config.xml dest=/var/lib/jenkins/jobs/php-template/config.xml owner=jenkins
+- copy: src=config.xml dest=/var/lib/jenkins/jobs/yii-sample-project/config.xml owner=jenkins
   tags: php-ci
 - action: command java -jar jenkins-cli.jar -s http://localhost:8080 reload-configuration
   tags: php-ci
@@ -142,6 +142,6 @@
   tags: php-ci
   
 - name: Start the demo build
-  action: command java -jar jenkins-cli.jar -s http://localhost:8080 build "php-template"
+  action: command java -jar jenkins-cli.jar -s http://localhost:8080 build "yii-sample-project"
   ignore_errors: yes
   tags: php-ci
