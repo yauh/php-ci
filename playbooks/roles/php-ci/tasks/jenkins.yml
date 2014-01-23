@@ -121,17 +121,17 @@
   action: command chown -R jenkins:nogroup /var/lib/jenkins/updates
   tags: php-ci
 
+- name: Get Jenkins cli
+  action: command wget http://localhost:8080/jnlpJars/jenkins-cli.jar
+  tags: php-ci
+
 - name: Jenkins is restarting
-  action: command java -jar jenkins-cli.jar -s http://localhost:8080 safe-restart
+  service: name=jenkins state=restarted
   tags: php-ci
 
 - wait_for: port=8080 delay=20
   tags: php-ci
   
-- name: Get Jenkins cli
-  action: command wget http://localhost:8080/jnlpJars/jenkins-cli.jar
-  tags: php-ci
-
 - name: Get Jenkins plugins
   action: command java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin git checkstyle cloverphp dry htmlpublisher jdepend plot pmd violations xunit
   ignore_errors: yes
@@ -141,8 +141,12 @@
   tags: php-ci
 - copy: src=config.xml dest=/var/lib/jenkins/jobs/yii-sample-project/config.xml owner=jenkins
   tags: php-ci
-- action: command java -jar jenkins-cli.jar -s http://localhost:8080 reload-configuration
+
+- service: name=jenkins state=restarted
   tags: php-ci
+    
+#- action: command java -jar jenkins-cli.jar -s http://localhost:8080 reload-configuration
+#  tags: php-ci
 
 - wait_for: port=8080 delay=20
   tags: php-ci

@@ -13,13 +13,16 @@ The magic behind the scenes is powered by [Ansible](http://www.ansibleworks.com/
 
 There are two ways how to perform the installation for PHP-CI
 
-1. fully automated (fast and simple)
+1. fully automated (fast and simple) - just download a file and execute it
 2. executing Ansible playbooks (advanced)
 
 Disclaimer
 ==========
 
-Please do not run any of these scripts on production servers or machine in the internet unless you know what you are doing. These scripts will not secure your installation and expose your systems to the world. Yes, even your source code! Best to run it on a machine behind a firewall that cannot be accessed from the outside.
+Please do not run any of these scripts on production servers or machines directly accesible from the internet unless you know what you are doing. **These scripts will not secure your installation and expose your systems to the world.**
+Yes, even your source code will be accessible to anyone!
+
+Best to run it on a machine behind a firewall that cannot be accessed from the outside.
 
 Requirements
 ------------
@@ -36,12 +39,14 @@ It helps to have some familiarity with the linux command line. Otherwise just do
 
 Simple setup
 ------------
-Copy the file `install.sh` to your Debian machine. Grab it from github and execute it with the following commands
+Copy the file `install.sh` to your Debian machine. Log into your Debian machine that is going to be the PHP server and start the deployment with the following commands
 
 ```
 $ wget https://raw.github.com/perlmonkey/php-ci/master/install.sh
 $ /bin/bash install.sh
 ```
+
+The script asks you to enter _y_ if you really wish to continue. Then you must provide your root password that enables the connection.
 
 Now sit back and wait a while, the script first bootstraps [Ansible](http://www.ansibleworks.com/) on your machine and then installs [a LAMP stack](http://stackoverflow.com/questions/10060285/what-is-a-lamp-stack) plus the [Jenkins-CI](http://jenkins-php.org/) with a template for PHP projects (optimized slightly for use with [Yii](http://www.yiiframework.com/)).
 
@@ -144,6 +149,7 @@ Todo
 ----
 
 Unfortunately the playbooks are not as clean as I would have wanted them to be. Especially since the _pear_ command is not very forgiving and produces errors that had to be ignored. Also currently only the Yii framework is really integrated as it is the one I work with. 
+Also Jenkins does not update the already existing plugins.
 
 Changelog
 ---------
