@@ -144,14 +144,6 @@
 
 - service: name=jenkins state=restarted
   tags: php-ci
-    
-#- action: command java -jar jenkins-cli.jar -s http://localhost:8080 reload-configuration
-#  tags: php-ci
 
 - wait_for: port=8080 delay=20
-  tags: php-ci
-  
-- name: Start the demo build
-  action: command java -jar jenkins-cli.jar -s http://localhost:8080 build "yii-sample-project"
-  ignore_errors: yes
   tags: php-ci

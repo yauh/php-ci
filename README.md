@@ -50,6 +50,8 @@ The script asks you to enter _y_ if you really wish to continue. Then you must p
 
 Now sit back and wait a while, the script first bootstraps [Ansible](http://www.ansibleworks.com/) on your machine and then installs [a LAMP stack](http://stackoverflow.com/questions/10060285/what-is-a-lamp-stack) plus the [Jenkins-CI](http://jenkins-php.org/) with a template for PHP projects (optimized slightly for use with [Yii](http://www.yiiframework.com/)).
 
+Also you can watch me [perform a simple setup on Youtube](https://www.youtube.com/watch?v=MPjR4mgh_E0).
+
 Advanced setup
 --------------
 
