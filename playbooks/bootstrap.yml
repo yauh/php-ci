@@ -1,4 +1,4 @@
 ---
-# file: xenbook.yml
+# file: bootstrap.yml
 - include: lamp.yml
 - include: php-ci.yml

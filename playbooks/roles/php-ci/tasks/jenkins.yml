@@ -94,6 +94,9 @@
 - command: pear install --force --alldeps pear.phpunit.de/PHPUnit_Story
   ignore_errors: yes
   tags: php-ci
+- command: pear install pear.phpqatools.org/phpqatools
+  ignore_errors: yes
+  tags: php-ci
 - command: pear install PHP_CodeSniffer
   ignore_errors: yes
   tags: php-ci
@@ -116,7 +119,10 @@
 
 - name: Workaround for updates issues with CLI
   action: command chown -R jenkins:nogroup /var/lib/jenkins/updates
-  notify: restart jenkins
+  tags: php-ci
+
+- name: Jenkins is restarting
+  action: command java -jar jenkins-cli.jar -s http://localhost:8080 safe-restart
   tags: php-ci
 
 - wait_for: port=8080 delay=20

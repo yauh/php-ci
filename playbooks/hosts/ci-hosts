@@ -1,0 +1,7 @@
+[ci]
+10.211.55.3
+192.168.2.201 # change to the hostname or IP of your CI machine
+
+[lamp]
+10.211.55.3
+192.168.2.202 # change to the hostname or IP of your LAMP machine

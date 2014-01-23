@@ -2,10 +2,11 @@
 # install.sh is used to bootstrap the php-ci environment on a single machine
 # Author: Stephan Hochhaus <stephan@yauh.de>
 # Link: https://github.com/perlmonkey/php-ci
+#
 # This script requires
 # * freshly installed Debian Wheezy 7.x
 # * connection to the internet from the machine
-# * (optional) firewall to prevent users form the internet to access the machine directly
+# * (strongly suggested) firewall to prevent users form the internet to access the machine directly
 
 clear
 echo "*********************************************"
@@ -31,10 +32,10 @@ else
 fi
 
 # Install ssh software on a minimal Debian system
-#apt-get update
+apt-get update
 apt-get -y install ssh sshpass
 
-# check if ssh access works
+# check if ssh access works - we stop if it doesn't work
 export SSH_CONNECT=false
 sshpass  -p $PASS ssh -o StrictHostKeyChecking=no root@127.0.0.1 cat /etc/hostname && export SSH_CONNECT=true
 
@@ -48,7 +49,7 @@ else
   exit 1
 fi
 
-echo "Ok, now grab a cup of coffee, give me a couple of minutes to set things up"
+echo "Ok, now give me a couple of minutes to set things up"
 
 # Install all package requirements
 apt-get -y install sudo expect autoconf gcc python python-all python-all-dev python-setuptools git
@@ -67,7 +68,7 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 expect <<- DONE
   set timeout -1
 
-  spawn /usr/local/bin/ansible-playbook /tmp/php-ci/bootstrap.yml -i /tmp/php-ci/ci-hosts -k
+  spawn /usr/local/bin/ansible-playbook /tmp/php-ci/playbooks/bootstrap.yml -i /tmp/php-ci/playbooks/localhost -k
 
   # Wait for password prompt
   expect "*?assword:*"
@@ -76,4 +77,7 @@ expect <<- DONE
 
   expect eof
 DONE
-echo "All done, hopefully you can enjoy your new PHP-CI environment on port 8080 now"
+
+# And we're done.
+echo "All done."
+echo "If nothing bad happened you can enjoy your new PHP-CI environment on port 8080 now"
