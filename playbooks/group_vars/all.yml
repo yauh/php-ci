@@ -1,6 +1,0 @@
----
-# file: group_vars/all
-bootstrap_user: stephan # change this to your user account that manages the server
-use_sudo: True
-sudo_user: root
-admin_email: mail@example.org
