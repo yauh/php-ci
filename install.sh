@@ -135,8 +135,8 @@ fi
 
 # if on Ubuntu not all playbooks run well
 sb_release -d | grep Ubuntu && export DISTRO=Ubuntu
-if  [ $DISTRO == 'Ubuntu'  ]; then 
-  ansible_command+=' --tags="common,php-ci"' # ask for a ssh password
+if  [ $DISTRO == Ubuntu  ]; then 
+  ansible_command+=' --tags=common,php-ci' # only known working playbooks
 fi
 
 # if you like ansible to be chatty (for debugging purposes)
