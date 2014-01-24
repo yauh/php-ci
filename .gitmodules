@@ -9,7 +9,7 @@
 	url = https://github.com/perlmonkey/role-msmtp
 [submodule "playbooks/roles/role-jenkins-php"]
 	path = playbooks/roles/role-jenkins-php
-	url = git@github.com:perlmonkey/role-jenkins-php.git
+	url = https://github.com/perlmonkey/role-jenkins-php.git
 [submodule "playbooks/roles/role-lamp"]
 	path = playbooks/roles/role-lamp
-	url = git@github.com:perlmonkey/role-lamp.git
+	url = https://github.com/perlmonkey/role-lamp
