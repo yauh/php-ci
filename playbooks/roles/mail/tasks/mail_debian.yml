@@ -1,0 +1,21 @@
+---
+# file: roles/mail/tasks/mail.yml
+
+- name: Install msmtp
+  action: apt pkg={{ item }} state=latest
+  with_items:
+    - msmtp
+    - msmtp-mta
+    - ca-certificates
+
+- name: Mail | Adjust /etc/msmtprc
+  action: template src=msmtprc.j2 dest=/etc/msmtprc
+
+- name: Remove exim4-base and exim4-config
+  apt: pkg={{ item }} state=absent
+  with_items:
+    - exim4-base
+    - exim4-config
+
+- name: Sending a testmail to {{ mail.from_address }}
+  shell: cat /etc/hostname | mail -s test {{ mail.from_address }}

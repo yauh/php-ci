@@ -1,4 +1,6 @@
 ---
 # file: bootstrap.yml
+- include: mail.yml
 - include: lamp.yml
 - include: php-ci.yml
+- include: hardening.yml
