@@ -1,6 +1,6 @@
 # PHP-CI for Yii
 
-This sets up a full Continuous Integration environment for PHP projects with the Yii Framework based on Debian servers
+This sets up a full Continuous Integration environment for PHP projects with the Yii Framework based on Debian-based servers.
 
 About
 =====
@@ -30,7 +30,7 @@ Requirements
 In the following we assume you have at least one Debian machine, preferably running Debian Wheezy (7). 
 
 Set up a Debian machine with a minimal installation. Use [the official documentation](http://www.debian.org/releases/stable/amd64/index.html.en), if needed.
-All the testing was performed on a minimal install of Debian 7.3.0 AMD64 but it should work on any Debian system. It might also work on already pre-configured machines.
+All the testing was performed on a minimal install of Debian 7.3.0 AMD64 as well as Ubuntu Server 12.04 but it should work on any Debian system. It might also work on already pre-configured machines.
 
 All required software will be taken care of by the `install.sh` script.
 
@@ -39,14 +39,14 @@ It helps to have some familiarity with the linux command line. Otherwise just do
 
 Simple setup
 ------------
-Copy the file `install.sh` to your Debian machine. Log into your Debian machine that is going to be the PHP server and start the deployment with the following commands
+Copy the file `install.sh` to your Debian machine. Log into your Debian/Ubuntu machine that is going to be the PHP server and start the deployment with the following commands
 
 ```
 $ wget https://raw.github.com/perlmonkey/php-ci/master/install.sh
 $ /bin/bash install.sh
 ```
 
-The script asks you to enter _y_ if you really wish to continue. Then you must provide your root password that enables the connection.
+The script asks you to enter _y_ if you really wish to continue. Then you must provide your user password that enables the connection.
 
 Now sit back and wait a while, the script first bootstraps [Ansible](http://www.ansibleworks.com/) on your machine and then installs [a LAMP stack](http://stackoverflow.com/questions/10060285/what-is-a-lamp-stack) plus the [Jenkins-CI](http://jenkins-php.org/) with a template for PHP projects (optimized slightly for use with [Yii](http://www.yiiframework.com/)).
 
@@ -98,7 +98,7 @@ Setting up the remote machine so you can easily log in using ssh is done using t
 * refresh your packages and install some basic software
 * enables sudo without a password for your newly created user
 
-Make sure you can connect to the remote machine using ssh like this (the init must be performed as root):
+Make sure you can connect to the remote machine using ssh like this (the init must be performed as root or with sudo powers):
 
 ```
 macbook: stephan$ ssh root@192.168.2.1 cat /etc/hostname
@@ -155,4 +155,5 @@ Also Jenkins does not update the already existing plugins.
 
 Changelog
 ---------
-2014-01-23 - Initial release with support for Debian only
+2014-01-24 - v0.0.2 Massive Ansible and install.sh cleanup. Now with Ubuntu support
+2014-01-23 - v0.0.1 Initial release with support for Debian only
