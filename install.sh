@@ -137,7 +137,7 @@ fi
 lsb_release -d | grep Ubuntu && export DISTRO=Ubuntu
 if  [ $DISTRO == Ubuntu  ]; then 
   ansible_command+=' --tags=common,php-ci' # only known working playbooks
-  chmod u+w ~ # fixes issues if you cannot write in your own home
+  export ANSIBLE_REMOTE_TEMP=/tmp # for when you can't write home
 fi
 
 # if you like ansible to be chatty (for debugging purposes)
