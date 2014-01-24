@@ -23,11 +23,11 @@
 
 - name: Configure automatic security update
   template: dest=/etc/apt/apt.conf.d/50unattended-upgrades
-       src=unattended-upgrades.j2
-       backup=yes
+            src=unattended-upgrades.j2
+            backup=yes
 
 - name: Configure automatic updates settings
   template: dest=/etc/apt/apt.conf.d/02periodic
-       src=apt-periodic.j2
-       backup=yes
+            src=apt-periodic.j2
+            backup=yes
 
