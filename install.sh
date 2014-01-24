@@ -25,6 +25,8 @@ echo "******* You are running this script as $USER"
 if  [ -z $SUDO_USER  ]; then # if SUDO_USER is set it means we're running on sudo
   echo "******* If you see any errors make sure this user has sudo privileges"
   echo "******* This can be done using the command $ adduser <usernamer> sudo"
+else
+  echo "******* But we know you are $SUDO_USER"
 fi
 echo "******* Please note:"
 echo "******* Never enter any commands during the process!"
@@ -60,7 +62,11 @@ fi
 
 # Let's check if ssh can connect
 echo "******* Checking SSH connect works"
-sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $USER@127.0.0.1 cat /etc/hostname > /dev/null 2>&1 && SSH_CONNECT=successful
+if  [ -z $SUDO_USER  ]; then # if SUDO_USER is set it means we're running on sudo
+  sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $USER@127.0.0.1 cat /etc/hostname > /dev/null 2>&1 && SSH_CONNECT=successful
+else
+  sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $SUDO_USER@127.0.0.1 cat /etc/hostname > /dev/null 2>&1 && SSH_CONNECT=successful
+fi
 if  [ $SSH_CONNECT == not_successful ]; then
   echo "*ERROR* SSH-Connection not successful"
   exit 1
@@ -70,7 +76,11 @@ fi
 
 # Check if sudo requires a password - needed for ansible-playbooks later on
 echo "******* Now checking whether sudo requires a password"
-sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $USER@127.0.0.1 sudo cat /etc/hostname > /dev/null 2>&1 && SUDO_PASSWORD_REQUIRED=true
+if  [ -z $SUDO_USER  ]; then # if SUDO_USER is set it means we're running on sudo
+  sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $USER@127.0.0.1 sudo cat /etc/hostname > /dev/null 2>&1 && SUDO_PASSWORD_REQUIRED=true
+else
+  sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $SUDO_USER@127.0.0.1 sudo cat /etc/hostname > /dev/null 2>&1 && SUDO_PASSWORD_REQUIRED=true
+fi
 echo "******* We need a sudo password indeed"
 
 # if SSH_PASSWORD_REQUIRED==true we need to supply -k to ansible
@@ -101,7 +111,12 @@ cd /tmp
 echo "******* Cloning into perlmonkey/php-ci"
 git clone https://github.com/perlmonkey/php-ci.git > /dev/null 2>&1 || cd /tmp/php-ci && git reset --hard HEAD && git pull > /dev/null 2>&1
 
-ansible_command="/usr/local/bin/ansible-playbook /tmp/php-ci/playbooks/bootstrap.yml -i /tmp/php-ci/playbooks/hosts/localhost -k -vvv > /dev/null 2>&1"
+ansible_command="/usr/local/bin/ansible-playbook " # call ansible-playbook
+ansible_command+="/tmp/php-ci/playbooks/bootstrap.yml" # using the bootstrap playbook
+ansible_command+=" -i /tmp/php-ci/playbooks/hosts/localhost" # and the localhost hosts-file
+ansible_command+=" -k" # ask for a ssh password
+ansible_command+=" -K" # ask for a sudo password
+ansible_command+=" -vvv" # be very verbose
 
 # Perform the ansible playbook using the root password given above
 echo "******* Executing ansible playbooks"
