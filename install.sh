@@ -7,71 +7,112 @@
 # * freshly installed Debian Wheezy 7.x
 # * connection to the internet from the machine
 # * (strongly suggested) firewall to prevent users form the internet to access the machine directly
+# setting some variables first
+SSH_CONNECT=not_successful
+USER=`whoami`
 
+# here the magic begins
 clear
-echo "*********************************************"
-echo "* Setting up this computer as a PHP-CI      *"
-echo "* Like described at http://jenkins-php.org/ *"
-echo "* * * * * * * * * WARNING * * * * * * * * * *"
-echo "* Please make sure this machine cannot be   *"
-echo "* accessed from the internet                *"
-echo "* Or that you harden it after the install   *"
-echo "*********************************************"
-echo "Do you really want to continue? (y/n)"
-read letsgo
+echo "*************************************************************************"
+echo "*                 Setting up this computer as a PHP-CI                  *"
+echo "*        Based on descriptions found at http://jenkins-php.org/         *"
+echo "*-----------------------------------------------------------------------*"
+echo "* WARNING:  Please make sure this machine cannot be                     *"
+echo "*           accessed from the internet                                  *"
+echo "*           Or that you harden it after the install                     *"
+echo "*************************************************************************"
+echo "******* You are running this script as $USER"
+if  [ -z $SUDO_USER  ]; then # if SUDO_USER is set it means we're running on sudo
+  echo "******* If you see any errors make sure this user has sudo privileges"
+  echo "******* This can be done using the command $ adduser <usernamer> sudo"
+fi
+echo "******* Please note:"
+echo "******* Never enter any commands during the process!"
+echo "******* Only if you see a line beginning with *INPUT* like this:"
+echo "*INPUT* Do you really want to continue? (y/n)"
+#read LETSGO
+LETSGO=y
 
-if  [ $letsgo == y ]; then
+
+
+if  [ $LETSGO == y ]; then
   # We expect the root user to be used for this action
   # also the machine must accept root to connect using ssh and a password
-  PASS="password"
-  echo "Great. Now please enter the root password to access this machine: "
-  read PASS
+  echo "******* Great. Let's go and check the prerequisites"
+  echo "*INPUT* But first please enter your user password"
+  #read USER_PASSWD
+  USER_PASSWD="password"
 else
-  echo "Nothing to be done."
+  echo "******* Nothing to be done."
   exit 1
 fi
 
-# Install ssh software on a minimal Debian system
-apt-get update
-apt-get -y install ssh sshpass
-
-# check if ssh access works - we stop if it doesn't work
-export SSH_CONNECT=false
-sshpass  -p $PASS ssh -o StrictHostKeyChecking=no root@127.0.0.1 cat /etc/hostname && export SSH_CONNECT=true
-
-echo $SSH_CONNECT
-if  [ $SSH_CONNECT == false ]; then
-  echo "Nothing can be done, ssh connection not possible (was your password correct?)"
-  exit 1
-elif [ $SSH_CONNECT == true ]; then
-  echo "For the record: ssh can connect, hooray"
+# Install ssh software on a minimal system
+echo "******* First we make sure some essential software is installed"
+if  [ -z $SUDO_USER  ]; then # if SUDO_USER is set it means we're running on sudo
+  apt-get update > /dev/null 2>&1 || { echo '*ERROR* You do not have sufficient privileges to continue.'; echo '******* Consider using sudo or become root' ; exit 1; }
+  apt-get -y install sudo ssh sshpass > /dev/null 2>&1
 else
-  exit 1
+  sudo apt-get update > /dev/null 2>&1
+  sudo apt-get -y install ssh sshpass > /dev/null 2>&1
 fi
 
-echo "Ok, now give me a couple of minutes to set things up"
+
+# Let's check if ssh can connect
+echo "******* Checking SSH connect works"
+sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $USER@127.0.0.1 cat /etc/hostname > /dev/null 2>&1 && SSH_CONNECT=successful
+if  [ $SSH_CONNECT == not_successful ]; then
+  echo "*ERROR* SSH-Connection not successful"
+  exit 1
+else
+  echo "******* SSH-Connection successful"
+fi
+
+# Check if sudo requires a password - needed for ansible-playbooks later on
+echo "******* Now checking whether sudo requires a password"
+sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $USER@127.0.0.1 sudo cat /etc/hostname > /dev/null 2>&1 && SUDO_PASSWORD_REQUIRED=true
+echo "******* We need a sudo password indeed"
+
+# if SSH_PASSWORD_REQUIRED==true we need to supply -k to ansible
+# if SUDO_PASSWORD_REQUIRED==true we need to supply -K to ansible
+
+echo "******* Ok, now give me a couple of minutes to set things up"
 
 # Install all package requirements
-apt-get -y install sudo expect autoconf gcc python python-all python-all-dev python-setuptools git
+echo "******* Installing more required software"
+if  [ -z $SUDO_USER  ]; then # if SUDO_USER is set it means we're running on sudo
+  apt-get -y install expect autoconf gcc python python-all python-all-dev python-setuptools git > /dev/null 2>&1
+else
+  sudo apt-get -y install expect autoconf gcc python python-all python-all-dev python-setuptools git > /dev/null 2>&1
+fi
 
 # Install Ansible using pip
-easy_install pip
-pip install paramiko PyYAML jinja2 httplib2
-pip install ansible
+echo "******* Setting up Ansible using pip"
+if  [ -z $SUDO_USER  ]; then # if SUDO_USER is set it means we're running on sudo
+  easy_install pip > /dev/null 2>&1
+  pip install paramiko PyYAML jinja2 httplib2 ansible > /dev/null 2>&1
+else
+  sudo easy_install pip > /dev/null 2>&1
+  sudo pip install paramiko PyYAML jinja2 httplib2 ansible > /dev/null 2>&1
+fi
 
 # clone the php-ci repository to /tmp or git pull if already present
 cd /tmp
-git clone https://github.com/perlmonkey/php-ci.git || cd /tmp/php-ci && git pull
+echo "******* Cloning into perlmonkey/php-ci"
+git clone https://github.com/perlmonkey/php-ci.git > /dev/null 2>&1 || cd /tmp/php-ci && git reset --hard HEAD && git pull > /dev/null 2>&1
+
+ansible_command="/usr/local/bin/ansible-playbook /tmp/php-ci/playbooks/bootstrap.yml -i /tmp/php-ci/playbooks/hosts/localhost -k -vvv > /dev/null 2>&1"
 
 # Perform the ansible playbook using the root password given above
-export ANSIBLE_HOST_KEY_CHECKING=False
+echo "******* Executing ansible playbooks"
+echo "******* Now you'll see some more logging messages"
 expect <<- DONE
   set timeout -1
 
-  spawn /usr/local/bin/ansible-playbook /tmp/php-ci/playbooks/bootstrap.yml -i /tmp/php-ci/playbooks/hosts/localhost -k
+  spawn $ansible_command
 
   # Wait for password prompt
-  expect "*?assword:*"
+  expect "*SSH password:*"
   # Send password stored in $PASS
   send -- "$PASS\r"
 
@@ -79,5 +120,4 @@ expect <<- DONE
 DONE
 
 # And we're done.
-echo "All done."
-echo "If nothing bad happened you can enjoy your new PHP-CI environment on port 8080 now"
+echo "******* Congratulations, you're done."
