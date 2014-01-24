@@ -6,7 +6,7 @@
                 Options FollowSymLinks
                 AllowOverride All
         </Directory>
-        <Directory /var/www/>
+        <Directory {{ lamp.apache.root }}>
                 Options Indexes FollowSymLinks MultiViews
                 AllowOverride All
                 Order allow,deny

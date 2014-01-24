@@ -1,28 +1,11 @@
 ---
 # file: roles/lamp/tasks/lamp_debian.yml
 
-- name: Some common software should be installed
-  action: apt pkg={{ item }} state=latest
-  with_items:
-      - vim
-      - screen
-      - bzip2
-      - tar
-      - git
-      - htop
-  tags: lamp  
-
-- name: Set the timezone
-  action: command /bin/echo {{ lamp.timezone }} > /etc/timezone  && command dpkg-reconfigure -f noninteractive tzdata
-  tags: lamp
-
 - name: Set debconf vars
   action: raw sudo echo mysql-server mysql-server/root_password password {{ lamp.mysql.root_password }} | sudo /usr/bin/debconf-set-selections
-  tags: lamp
 
 - name: Set debconf vars
   action: raw sudo echo mysql-server mysql-server/root_password_again password {{ lamp.mysql.root_password }} | sudo /usr/bin/debconf-set-selections
-  tags: lamp
 
 - name: Install webstack and database
   action: apt pkg={{ item }} state=latest
@@ -45,17 +28,14 @@
       - php-apc
       - php-pear
       - python-mysqldb
-  tags: lamp
 
 - name: Enable apache2 modules
   command: a2enmod {{ item }}
   with_items: lamp.apache.modules
   notify: restart apache2
-  tags: lamp
 
 - name: copy .my.cnf file with root password credentials
   template: src=roles/lamp/templates/root-my-cnf.j2 dest=/root/.my.cnf owner=root mode=0600
-  tags: lamp
     
 - name: update mysql root password for all root accounts
   mysql_user: name=root host={{ item }} password={{ lamp.mysql.root_password }} login_user=root login_password={{ lamp.mysql.root_password }} check_implicit_admin=yes
@@ -64,50 +44,28 @@
       - 127.0.0.1
       - ::1
       - localhost
-  tags: lamp
 
 - name: ensure anonymous users are not in the database
   mysql_user: name='' host={{ item }} state=absent
   with_items:
       - localhost
       - "{{ ansible_hostname }}"
-  tags: lamp
 
 - name: remove the test database
   mysql_db: name=test state=absent
-  tags: lamp
 
 - name: Create Database
   action: mysql_db login_user=root login_password={{ lamp.mysql.root_password }} name="{{ item.name }}"
   with_items:  mysql.users
   when:  mysql.users is defined
-  tags: lamp
 
 - name: Adds required MySQL users
   mysql_user: login_user=root login_password={{ lamp.mysql.root_password }} user="{{ item.name }}" password="{{ item.password }}" priv="{{ item.privs }}"
   with_items:  lamp.mysql.users
   when:  lamp.mysql.users is defined
-  tags: lamp
 
 - name: PHP.ini for the world to see
   action: template src=roles/lamp/templates/php.ini.j2 dest=/etc/php5/apache2/php.ini owner=root group=root mode=0755
-  tags: lamp
 
 - name: Configuration file for our site
-  action: template src=roles/lamp/templates/001-yiisite.j2 dest=/etc/apache2/sites-available/001-yiisite
-  tags: lamp
-
-- name: Grab Yii Framework 1.1.14
-  action: get_url url={{ item }} dest={{ lamp.apache.root }}yii.tar.gz mode=0755
-  with_items:
-    - https://github.com/yiisoft/yii/releases/download/1.1.14/yii-1.1.14.f0fee9.tar.gz
-  tags: lamp
-
-
-- name: Extract Yii Framework
-  action: command tar xzvf {{ lamp.apache.root }}yii.tar.gz -C {{ lamp.apache.root }}
-  tags: lamp
-
-- name: Make it /var/www/yii
-  file: state=link src={{ lamp.apache.root }}yii-1.1.14.f0fee9 dest={{ lamp.apache.root }}yii
-  tags: lamp
+  action: template src=roles/lamp/templates/001-mysite.j2 dest=/etc/apache2/sites-available/001-mysite

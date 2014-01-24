@@ -37,7 +37,7 @@
   command: pear install {{ item }}
   register: pear_result
   with_items:
-      - pear.netpirates.net/phpDox
+      - -f pear.netpirates.net/phpDox
       - pear.symfony.com/Yaml
       - --alldeps pear.phpunit.de/PHPUnit
       - --alldeps pear.phpunit.de/DbUnit

@@ -1,5 +1,6 @@
 ---
 # file: bootstrap.yml
+- include: common.yml
 - include: mail.yml
 - include: lamp.yml
 - include: php-ci.yml

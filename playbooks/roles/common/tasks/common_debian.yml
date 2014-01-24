@@ -1,0 +1,15 @@
+---
+# file: roles/common/tasks/common_debian.yml
+
+- name: Some common software should be installed
+  action: apt pkg={{ item }} state=latest
+  with_items:
+      - vim
+      - screen
+      - bzip2
+      - tar
+      - git
+      - htop
+
+- name: Set the timezone
+  action: command /bin/echo {{ common.timezone }} > /etc/timezone  && command dpkg-reconfigure -f noninteractive tzdata
