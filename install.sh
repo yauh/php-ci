@@ -10,6 +10,7 @@
 # setting some variables first
 SSH_CONNECT=not_successful
 USER=`whoami`
+SUDO_PASSWORD_REQUIRED=false
 
 # here the magic begins
 clear
@@ -32,8 +33,9 @@ echo "******* Please note:"
 echo "******* Never enter any commands during the process!"
 echo "******* Only if you see a line beginning with *INPUT* like this:"
 echo "*INPUT* Do you really want to continue? (y/n)"
-#read LETSGO
-LETSGO=y
+read LETSGO
+# for debugging purposes we can assume it is y
+#LETSGO=y
 
 
 
@@ -42,8 +44,9 @@ if  [ $LETSGO == y ]; then
   # also the machine must accept root to connect using ssh and a password
   echo "******* Great. Let's go and check the prerequisites"
   echo "*INPUT* But first please enter your user password"
-  #read USER_PASSWD
-  USER_PASSWD="password"
+  read USER_PASSWD
+  # again, for debugging purposes we can assume it is password
+  #USER_PASSWD="password"
 else
   echo "******* Nothing to be done."
   exit 1
@@ -74,17 +77,19 @@ else
   echo "******* SSH-Connection successful"
 fi
 
+# @TODO: This appears to be non-functional?!
+# workaround is setting the variable manually and always assuming sudo password is required
 # Check if sudo requires a password - needed for ansible-playbooks later on
 echo "******* Now checking whether sudo requires a password"
 if  [ -z $SUDO_USER  ]; then 
-  sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $USER@127.0.0.1 sudo cat /etc/hostname > /dev/null 2>&1 && SUDO_PASSWORD_REQUIRED=true
+  sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $USER@127.0.0.1 sudo cat /etc/hostname > /dev/null 2>&1 || SUDO_PASSWORD_REQUIRED=true
 else
-  sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $SUDO_USER@127.0.0.1 sudo cat /etc/hostname > /dev/null 2>&1 && SUDO_PASSWORD_REQUIRED=true
+  sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $SUDO_USER@127.0.0.1 sudo cat /etc/hostname > /dev/null 2>&1 || SUDO_PASSWORD_REQUIRED=true
 fi
-echo "******* We need a sudo password indeed"
 
-# if SSH_PASSWORD_REQUIRED==true we need to supply -k to ansible
-# if SUDO_PASSWORD_REQUIRED==true we need to supply -K to ansible
+if  [ SUDO_PASSWORD_REQUIRED == true  ]; then 
+  echo "******* We need a sudo password indeed"
+fi
 
 echo "******* Ok, now give me a couple of minutes to set things up"
 
@@ -122,24 +127,28 @@ ansible_command="/usr/local/bin/ansible-playbook " # call ansible-playbook
 ansible_command+="/tmp/php-ci/playbooks/bootstrap.yml" # using the bootstrap playbook
 ansible_command+=" -i /tmp/php-ci/playbooks/hosts/localhost" # and the localhost hosts-file
 ansible_command+=" -k" # ask for a ssh password
-ansible_command+=" -K" # ask for a sudo password
-ansible_command+=" -vvv" # be very verbose
+
+# if SUDO_PASSWORD_REQUIRED==true we need to supply -K to ansible
+if  [ $SUDO_PASSWORD_REQUIRED == 'true'  ]; then 
+  ansible_command+=" -K" # ask for a ssh password
+fi
+
+# if you like ansible to be chatty (for debugging purposes)
+#ansible_command+=" -vvv" # be very verbose
+
+echo "******* Starting ansible with $ansible_command"
 
 # Perform the ansible playbook using the root password given above
 echo "******* Executing ansible playbooks"
-echo "******* Now you'll see some more logging messages"
-expect <<- DONE
-  set timeout -1
+echo "******* Now you'll see some more logging messages from ansible"
 
-  spawn $ansible_command
-
-  # Wait for password prompt
-  expect "*SSH password:*"
-  # Send password stored in $PASS
-  send -- "$PASS\r"
-
-  expect eof
-DONE
+expect -c "
+   set timeout -1
+   spawn $ansible_command
+   expect password { send $USER_PASSWD\r ; exp_continue }
+   expect sudo { send $USER_PASSWD\r }
+   exit
+"
 
 # And we're done.
 echo "******* Congratulations, you're done."
