@@ -1,7 +1,8 @@
 ---
 # file: php-ci.yml
 - hosts: ci
-  sudo: True
-  user: "{{ bootstrap_user }}"
+  sudo: "{{ use_sudo }}"
+  sudo_user: "{{ use_sudo }}"
+  remote_user: "{{ bootstrap_user }}"
   roles:
-    - php-ci
+     - { role: php-ci, tags: php-ci}

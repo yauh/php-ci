@@ -2,6 +2,7 @@
 # file: mail.yml
 - hosts: all
   sudo: "{{ use_sudo }}"
+  sudo_user: "{{ use_sudo }}"
   remote_user: "{{ bootstrap_user }}"
   roles:
      - { role: mail, tags: mail}

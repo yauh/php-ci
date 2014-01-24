@@ -1,0 +1,95 @@
+---
+# file: roles/php-ci/tasks/jenkins.yml
+
+- name: Install python-software-properties
+  apt: pkg=python-software-properties state=installed
+  
+- name: Add Jenkins apt-key
+  action: apt_key url={{ jenkins.deb.key }} state=present
+  
+- name: Add Jenkins repository
+  apt_repository: repo='{{ jenkins.deb.repo }}' state=present
+
+- name: Install Jenkins
+  apt: pkg=jenkins state=installed
+
+- name: Install required tools 
+  action: apt pkg={{ item }} state=latest
+  with_items:
+      - openjdk-6-jdk
+      - php5
+      - php-pear
+      - php5-xsl
+      - php5-dev
+      - ant
+      - curl
+      - php5-xdebug
+  
+- command: pear config-set auto_discover 1
+
+- name: PEAR updates and upgrades
+  command: pear {{ item }}
+  with_items:
+      - update-channels
+      - upgrade-all
+
+- name: PEAR installing modules
+  command: pear install {{ item }}
+  register: pear_result
+  with_items:
+      - pear.netpirates.net/phpDox
+      - pear.symfony.com/Yaml
+      - --alldeps pear.phpunit.de/PHPUnit
+      - --alldeps pear.phpunit.de/DbUnit
+      - --alldeps pear.phpunit.de/phpcpd
+      - --alldeps pear.phpunit.de/phploc
+      - --alldeps pear.phpunit.de/PHPUnit_MockObject
+      - --alldeps pear.phpunit.de/PHPUnit_Selenium
+      - --alldeps pear.phpunit.de/PHPUnit_Story
+      - pear.phpmd.org/PHP_PMD
+      - pear.phpqatools.org/phpqatools
+      - PHP_CodeSniffer
+  failed_when: "'No releases available for package' in pear_result.stdout"
+  
+- file: path=/var/lib/jenkins/updates state=directory owner=jenkins
+ 
+- name: Workaround for updates issues with CLI
+  action: command wget -O /var/lib/jenkins/updates/default.json http://updates.jenkins-ci.org/update-center.json
+ 
+- name: Clean default.json file
+  lineinfile: dest=/var/lib/jenkins/updates/default.json regexp='updateCenter.*\(' state=absent
+- lineinfile: dest=/var/lib/jenkins/updates/default.json regexp='\);' state=absent
+
+- name: Workaround for updates issues with CLI
+  action: command chown -R jenkins:nogroup /var/lib/jenkins/updates
+
+- name: Get Jenkins cli
+  action: command wget http://localhost:8080/jnlpJars/jenkins-cli.jar
+
+- name: Get Jenkins plugins
+  action: command java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin git checkstyle cloverphp dry htmlpublisher jdepend plot pmd violations xunit
+
+- file: path=/var/lib/jenkins/jobs/yii-sample-project state=directory owner=jenkins
+   
+- copy: src=config.xml dest=/var/lib/jenkins/jobs/yii-sample-project/config.xml owner=jenkins
+
+- name: Grab PHP frameworks of choice
+  command: wget {{ item }}
+  with_items:
+    - https://github.com/yiisoft/yii/releases/download/1.1.14/yii-1.1.14.f0fee9.tar.gz
+
+- name: Extract frameworks
+  command: tar xzvf {{ item }} -C {{ jenkins.php.framework_directory }}
+  with_items:
+    - yii-1.1.14.f0fee9.tar.gz
+
+- name: Legacy fix for old times' sake
+  file: state=link src={{ jenkins.php.framework_directory }}yii-1.1.14.f0fee9 dest={{ jenkins.php.framework_directory }}yii
+ 
+- service: name=jenkins state=restarted
+ 
+- wait_for: port=8080 delay=20
+
+- command: java -jar jenkins-cli.jar -s http://localhost:8080 build "yii-sample-project"
+
+- file: path={{ ansible_env['PWD'] }}/jenkins-cli.jar state=absent

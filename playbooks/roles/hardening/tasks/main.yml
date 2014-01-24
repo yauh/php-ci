@@ -1,0 +1,6 @@
+---
+# file: roles/hardening/tasks/main.yml
+
+- include: hardening_debian.yml
+  when: ansible_distribution in [ 'Debian', 'Ubuntu' ]
+  
