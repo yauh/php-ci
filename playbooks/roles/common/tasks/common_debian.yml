@@ -4,6 +4,7 @@
 - name: Some common software should be installed
   action: apt pkg={{ item }} state=latest
   with_items:
+      - apt
       - vim
       - screen
       - bzip2

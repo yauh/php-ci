@@ -2,5 +2,5 @@
 # file: group_vars/all
 bootstrap_user: stephan # change this to your user account that manages the server
 use_sudo: True
-sudo_user: root
+sudo_user: root # remove if on ubuntu
 admin_email: mail@example.org

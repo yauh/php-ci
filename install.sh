@@ -133,6 +133,12 @@ if  [ $SUDO_PASSWORD_REQUIRED == 'true'  ]; then
   ansible_command+=" -K" # ask for a ssh password
 fi
 
+# if on Ubuntu not all playbooks run well
+sb_release -d | grep Ubuntu && export DISTRO=Ubuntu
+if  [ $DISTRO == 'Ubuntu'  ]; then 
+  ansible_command+=' --tags="common,php-ci"' # ask for a ssh password
+fi
+
 # if you like ansible to be chatty (for debugging purposes)
 #ansible_command+=" -vvv" # be very verbose
 
