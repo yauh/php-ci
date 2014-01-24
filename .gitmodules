@@ -1,0 +1,15 @@
+[submodule "playbooks/roles/role-common"]
+	path = playbooks/roles/role-common
+	url = https://github.com/perlmonkey/role-common
+[submodule "playbooks/roles/role-hardening"]
+	path = playbooks/roles/role-hardening
+	url = https://github.com/perlmonkey/role-hardening
+[submodule "playbooks/roles/role-msmtp"]
+	path = playbooks/roles/role-msmtp
+	url = https://github.com/perlmonkey/role-msmtp
+[submodule "playbooks/roles/role-jenkins-php"]
+	path = playbooks/roles/role-jenkins-php
+	url = git@github.com:perlmonkey/role-jenkins-php.git
+[submodule "playbooks/roles/role-lamp"]
+	path = playbooks/roles/role-lamp
+	url = git@github.com:perlmonkey/role-lamp.git
