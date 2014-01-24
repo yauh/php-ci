@@ -18,4 +18,4 @@
     - exim4-config
 
 - name: Sending a testmail to {{ mail.from_address }}
-  shell: cat /etc/hostname | mail -s test {{ mail.from_address }}
+  shell: cat /etc/hostname | msmtp -s test {{ mail.from_address }}
