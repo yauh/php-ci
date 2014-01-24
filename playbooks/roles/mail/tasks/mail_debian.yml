@@ -19,8 +19,8 @@
 
 - name: Sending a testmail to {{ mail.from_address }}
   shell: cat /etc/hostname | msmtp -s test {{ mail.from_address }}
-  when: ansible_distribution in [ 'Debian' ]
+  when: ansible_distribution in [ 'Ubuntu' ]
 
 - name: Sending a testmail to {{ mail.from_address }}
   shell: cat /etc/hostname | mail -s test {{ mail.from_address }}
-  when: ansible_distribution in [ 'Ubuntu' ]
+  when: ansible_distribution in [ 'Debian' ]
