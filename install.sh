@@ -136,7 +136,7 @@ fi
 # if on Ubuntu not all playbooks run well
 lsb_release -d | grep Ubuntu && export DISTRO=Ubuntu
 if  [ $DISTRO == Ubuntu  ]; then 
-  ansible_command+=' --tags=common,php-ci' # only known working playbooks
+  ansible_command+=' --tags=common,mail,php-ci' # only known working playbooks
   export ANSIBLE_REMOTE_TEMP=/tmp # for when you can't write home
 fi
 
