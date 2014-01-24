@@ -1,6 +1,0 @@
----
-# file: roles/mail/tasks/main.yml
-
-- include: mail_debian.yml
-  when: ansible_distribution in [ 'Debian', 'Ubuntu' ]
-  

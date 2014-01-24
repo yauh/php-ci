@@ -4,4 +4,4 @@
   sudo: True
   remote_user: "{{ bootstrap_user }}"
   roles:
-     - { role: lamp, tags: lamp}
+     - { role: role-lamp, tags: lamp}

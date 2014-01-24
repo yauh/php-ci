@@ -1,7 +1,7 @@
 ---
-# file: hardening.yml
+# file: msmtp.yml
 - hosts: all
   sudo: True
   remote_user: "{{ bootstrap_user }}"
   roles:
-     - { role: role-hardening, tags: hardening}
+     - { role: role-msmtp, tags: mail}

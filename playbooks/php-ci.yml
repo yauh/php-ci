@@ -4,4 +4,4 @@
   sudo: True
   remote_user: "{{ bootstrap_user }}"
   roles:
-     - { role: php-ci, tags: php-ci}
+     - { role: role-jenkins-php, tags: php-ci}

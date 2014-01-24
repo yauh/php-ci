@@ -4,4 +4,4 @@
   sudo: True
   remote_user: "{{ bootstrap_user }}"
   roles:
-     - { role: common, tags: common}
+     - { role: role-common, tags: common}

@@ -1,7 +1,7 @@
 ---
 # file: bootstrap.yml
 - include: common.yml
-- include: mail.yml
+- include: msmtp.yml
 - include: lamp.yml
 - include: php-ci.yml
 - include: hardening.yml

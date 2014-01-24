@@ -1,6 +1,0 @@
----
-# file: roles/common/tasks/common.yml
-
-- include: common_debian.yml
-  when: ansible_distribution in [ 'Debian', 'Ubuntu' ]
-  

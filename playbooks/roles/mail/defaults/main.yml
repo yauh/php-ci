@@ -1,7 +1,0 @@
----
-mail:
-  host: smtp.gmail.com
-  port: 587
-  user: youraddress@gmail.com
-  password: password
-  from_address: server@example.org
