@@ -156,4 +156,5 @@ Also Jenkins does not update the already existing plugins.
 Changelog
 ---------
 2014-01-24 - v0.0.2 Massive Ansible and install.sh cleanup. Now with Ubuntu support
+
 2014-01-23 - v0.0.1 Initial release with support for Debian only
