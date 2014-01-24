@@ -62,7 +62,7 @@ fi
 
 # Let's check if ssh can connect
 echo "******* Checking SSH connect works"
-if  [ -z $SUDO_USER  ]; then # if SUDO_USER is set it means we're running on sudo
+if  [ -z $SUDO_USER  ]; then 
   sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $USER@127.0.0.1 cat /etc/hostname > /dev/null 2>&1 && SSH_CONNECT=successful
 else
   sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $SUDO_USER@127.0.0.1 cat /etc/hostname > /dev/null 2>&1 && SSH_CONNECT=successful
@@ -76,7 +76,7 @@ fi
 
 # Check if sudo requires a password - needed for ansible-playbooks later on
 echo "******* Now checking whether sudo requires a password"
-if  [ -z $SUDO_USER  ]; then # if SUDO_USER is set it means we're running on sudo
+if  [ -z $SUDO_USER  ]; then 
   sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $USER@127.0.0.1 sudo cat /etc/hostname > /dev/null 2>&1 && SUDO_PASSWORD_REQUIRED=true
 else
   sshpass -p $USER_PASSWD ssh -o StrictHostKeyChecking=no $SUDO_USER@127.0.0.1 sudo cat /etc/hostname > /dev/null 2>&1 && SUDO_PASSWORD_REQUIRED=true
@@ -110,6 +110,13 @@ fi
 cd /tmp
 echo "******* Cloning into perlmonkey/php-ci"
 git clone https://github.com/perlmonkey/php-ci.git > /dev/null 2>&1 || cd /tmp/php-ci && git reset --hard HEAD && git pull > /dev/null 2>&1
+
+# Adjust the username in the vars file so ansible knows whose personality to use
+if  [ -z $SUDO_USER  ]; then 
+  sed -i "/change this to your user account that manages the server/c\bootstrap_user: $USER" /tmp/php-ci/playbooks/group_vars/all
+else
+  sed -i "/change this to your user account that manages the server/c\bootstrap_user: $SUDO_USER" /tmp/php-ci/playbooks/group_vars/all
+fi
 
 ansible_command="/usr/local/bin/ansible-playbook " # call ansible-playbook
 ansible_command+="/tmp/php-ci/playbooks/bootstrap.yml" # using the bootstrap playbook
