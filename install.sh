@@ -134,9 +134,10 @@ if  [ $SUDO_PASSWORD_REQUIRED == 'true'  ]; then
 fi
 
 # if on Ubuntu not all playbooks run well
-sb_release -d | grep Ubuntu && export DISTRO=Ubuntu
+lsb_release -d | grep Ubuntu && export DISTRO=Ubuntu
 if  [ $DISTRO == Ubuntu  ]; then 
   ansible_command+=' --tags=common,php-ci' # only known working playbooks
+  chmod u+w ~ # fixes issues if you cannot write in your own home
 fi
 
 # if you like ansible to be chatty (for debugging purposes)
