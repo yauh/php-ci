@@ -1,5 +1,5 @@
 ---
-# file: roles/mail/tasks/mail.yml
+# file: roles/mail/tasks/mail_debian.yml
 
 - name: Install msmtp
   action: apt pkg={{ item }} state=latest

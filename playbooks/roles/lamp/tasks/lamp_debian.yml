@@ -1,5 +1,5 @@
 ---
-# file: roles/lamp/tasks/lamp.yml
+# file: roles/lamp/tasks/lamp_debian.yml
 
 - name: Some common software should be installed
   action: apt pkg={{ item }} state=latest

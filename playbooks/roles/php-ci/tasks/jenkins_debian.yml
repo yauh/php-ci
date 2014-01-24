@@ -1,5 +1,5 @@
 ---
-# file: roles/php-ci/tasks/jenkins.yml
+# file: roles/php-ci/tasks/jenkins_debian.yml
 
 - name: Install python-software-properties
   apt: pkg=python-software-properties state=installed
