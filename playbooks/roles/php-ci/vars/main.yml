@@ -14,3 +14,4 @@ jenkins:
     session_cookie_httponly: 1
     display_errors: Off
     error_reporting: E_ALL & ~E_DEPRECATED
+    framework_directory: /var/www/
