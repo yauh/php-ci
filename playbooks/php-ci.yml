@@ -1,7 +1,7 @@
 ---
 # file: php-ci.yml
 - hosts: ci
-  sudo: "{{ use_sudo }}"
+  sudo: True
   sudo_user: "{{ sudo_user }}"
   remote_user: "{{ bootstrap_user }}"
   roles:
