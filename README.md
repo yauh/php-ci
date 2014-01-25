@@ -55,16 +55,33 @@ Also you can watch me [perform a simple setup on Youtube](https://www.youtube.co
 Advanced setup
 --------------
 
+## Cloning into php-ci
+
+Since the individual roles are used as submodules make sure you check them out correctly, e.g. like this:
+
+```
+$ git clone https://github.com/perlmonkey/php-ci.git
+$ cd php-ci
+$ git submodule init && git submodule update
+
+```
+
+## Using the playbooks
+
 If you prefer to know what you're doing and are familiar with the linux shell and perhaps even Ansible, let's have a deeper look.
 
-We assume the following:
+We'll only use Ansible playbooks, no need to use the shell script (*install.sh*). But still, the setup is not optimized for security but rather to get you up and running as quickly as possible.
+
+Ansible uses playbooks to perform tasks. These may be parameterized in that some tasks are only performed on dedicated LAMP servers, others only on CI machines. You organize all your machines in the `playbooks/hosts/ci-hosts` file. You may use IPs or hostnames.
+
+For all tasks carried out there are some switches you can adjust - the variables. You can specifically set variables inside a role or override it for a specific host or a group of hosts (check `playbooks/group_vars/all`).
+
+We assume the following setup for the next steps:
 
 * Management Machine: MacBook
 * Management User: stephan
 * Remote Server CI: 192.168.1.1
 * Remote Server LAMP: 192.168.1.2
-
-We'll only use Ansible playbooks, no need to use the shell script. But still, the setup is not optimized for security but rather to get you up and running as quickly as possible.
 
 ### Generate ssh keys on your management machine
 
@@ -117,7 +134,7 @@ macbook: stephan$ brew install https://raw.github.com/eugeneoden/homebrew/eca9de
 Check if it works (if you changed _myuser_ in the _vars_ section to something else, adjust the command accordingly):
 
 ```
-macbook: stephan$ ssh myuser@10.211.55.4
+macbook: stephan$ ssh myuser@192.168.1.1
 ```
 
 Change the entry for _bootstrap_user_ in the file `playbooks/group_vars/all` to _myuser_ (or the name you provided in the init stage).
@@ -133,28 +150,42 @@ Ready to bootstrap - you can now execute the `bootstrap.yml` playbook:
 macbook: stephan$ ansible-playbook playbooks/bootstrap.yml -i playbooks/hosts/ci-hosts
 ```
 
-Individual steps can be (de-)activated by explicitly calling certain tags using the `--tags="<tagname>"` switch. Only those mentioned will be executed then.
+Individual steps (read: roles) can be (de-)activated by explicitly calling certain tags using the `--tags="<tagname>"` switch. Only those mentioned will be executed then.
 
 
 Roles
 ---------
-### php-ci
+### role-common
+* Typical tasks to be performed on any server
+* can be invoked separately using the `--tags="common"` attribute to the playbook command
+
+### role-msmtp
+* If you already have a mail server and want to use it with SMTP (e.g. GMail or iCloud) instead of a full blown mail server use this. Then Jenkins can also send you mails.
+* can be invoked separately using the `--tags="mail"` attribute to the playbook command
+
+### role-jenkins-php
 * Deploys Jenkins CI with required PHP tools as pear modules
+* It also sets up [a demonstration job](https://github.com/perlmonkey/yii-sample-project) using the yii framework
 * can be invoked separately using the `--tags="php-ci"` attribute to the playbook command
 
-### lamp
+### role-lamp
 * Deploys a LAMP stack with Apache2 and MySQL and sets up a first site on port 80
 * can be invoked separately using the `--tags="lamp"` attribute
 
+### role-hardening
+* Tasks that will make your server more secure. Only execute these if you know what you are doing.
+* can be invoked separately using the `--tags="hardening"` attribute to the playbook command
 
-Todo
-----
+Known Issues
+-------------
+Sometimes during the execution of *role-jenkins-php* the last step - triggering a build for the example project - will fail. This has no effect on your setup, it just means you need to start the first build manually.
 
-Unfortunately the playbooks are not as clean as I would have wanted them to be. Especially since the _pear_ command is not very forgiving and produces errors that had to be ignored. Also currently only the Yii framework is really integrated as it is the one I work with. 
-Also Jenkins does not update the already existing plugins.
+Unless you provide proper credentials for your SMTP server, *role-msmtp* will always fail.
 
 Changelog
 ---------
+2014-01-25 - v0.0.3 Restructured project to use roles as submodules
+
 2014-01-24 - v0.0.2 Massive Ansible and install.sh cleanup. Now with Ubuntu support
 
 2014-01-23 - v0.0.1 Initial release with support for Debian only
