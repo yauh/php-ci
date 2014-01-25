@@ -112,9 +112,12 @@ else
 fi
 
 # clone the php-ci repository to /tmp or git pull if already present
+rm -Rf /tmp/php-ci
 cd /tmp
 echo "******* Cloning into perlmonkey/php-ci"
-git clone https://github.com/perlmonkey/php-ci.git > /dev/null 2>&1 || cd /tmp/php-ci && git reset --hard HEAD && git pull > /dev/null 2>&1
+git clone https://github.com/perlmonkey/php-ci.git > /dev/null 2>&1 
+cd /tmp/php-ci
+git submodule init && git submodule update
 
 # Adjust the username in the vars file so ansible knows whose personality to use
 if  [ -z $SUDO_USER  ]; then 
@@ -133,11 +136,14 @@ if  [ $SUDO_PASSWORD_REQUIRED == 'true'  ]; then
   ansible_command+=" -K" # ask for a ssh password
 fi
 
-# if on Ubuntu not all playbooks run well
+# only known working playbooks from install.sh
+# the others need variables to be adjusted
+ansible_command+=' --tags=common,lamp,php-ci' 
+
+# if on Ubuntu there were issues with writing in the home dir
 lsb_release -d | grep Ubuntu && export DISTRO=Ubuntu
 if  [ $DISTRO == Ubuntu  ]; then 
-  ansible_command+=' --tags=common,mail,php-ci' # only known working playbooks
-  export ANSIBLE_REMOTE_TEMP=/tmp # for when you can't write home
+	export ANSIBLE_REMOTE_TEMP=/tmp # for when you can't write home
 fi
 
 # if you like ansible to be chatty (for debugging purposes)
