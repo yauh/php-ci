@@ -140,9 +140,12 @@ fi
 ansible_command+=' --tags=common,lamp,php-ci' 
 
 # use the correct Jenkins port
-ansible_command+=' --extra-vars="jenkins.port='
-ansible_command+="$JENKINS_PORT"
-ansible_command+='"' 
+sed -i "/  port: 8080/c\  port: $JENKINS_PORT" /tmp/php-ci/playbooks/roles/role-jenkins-php/defaults/main.yml
+
+# would be nicer, but somehow ansible will not take precedence correctly. Maybe in a future version?!
+#ansible_command+=' --extra-vars="jenkins.port='
+#ansible_command+="$JENKINS_PORT"
+#ansible_command+='"' 
 
 
 # if on Ubuntu there were issues with writing in the home dir
