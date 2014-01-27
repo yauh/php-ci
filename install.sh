@@ -12,6 +12,7 @@ SSH_CONNECT=not_successful
 USER=`whoami`
 SUDO_PASSWORD_REQUIRED=false
 
+
 # here the magic begins
 clear
 echo "*************************************************************************"
@@ -32,25 +33,24 @@ fi
 echo "******* Please note:"
 echo "******* Never enter any commands during the process!"
 echo "******* Only if you see a line beginning with *INPUT* like this:"
-echo "*INPUT* Do you really want to continue? (y/n)"
+echo "*INPUT* Enter the port for Jenkins to run on: (default is 8080)"
 read LETSGO
 # for debugging purposes we can assume it is y
 #LETSGO=y
 
 
 
-if  [ $LETSGO == y ]; then
-  # We expect the root user to be used for this action
-  # also the machine must accept root to connect using ssh and a password
-  echo "******* Great. Let's go and check the prerequisites"
-  echo "*INPUT* But first please enter your user password"
-  read USER_PASSWD
-  # again, for debugging purposes we can assume it is password
-  #USER_PASSWD="password"
-else
-  echo "******* Nothing to be done."
-  exit 1
+if  [ -z $JENKINS_PORT ]; then
+  JENKINS_PORT=8080
+elif [ $JENKINS_PORT =~ ^[0-9]+$ ]; then
+    echo "******* Not a valid port number!"
+    exit 1
 fi
+echo "******* Jenkins will be listening on port $JENKINS_PORT"
+
+echo "******* Let's go and let me check the prerequisites"
+echo "*INPUT* But first please enter your user password"
+read USER_PASSWD
 
 # Install ssh software on a minimal system
 echo "******* First we make sure some essential software is installed"
@@ -139,6 +139,12 @@ fi
 # only known working playbooks from install.sh
 # the others need variables to be adjusted
 ansible_command+=' --tags=common,lamp,php-ci' 
+
+# use the correct Jenkins port
+ansible_command+=' --extra-vars="jenkins.port='
+ansible_command+="$JENKINS_PORT"
+ansible_command+='"' 
+
 
 # if on Ubuntu there were issues with writing in the home dir
 lsb_release -d | grep Ubuntu && export DISTRO=Ubuntu
