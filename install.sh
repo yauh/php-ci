@@ -8,6 +8,7 @@
 # * connection to the internet from the machine
 # * (strongly suggested) firewall to prevent users form the internet to access the machine directly
 # setting some variables first
+export ANSIBLE_HASH_BEHAVIOUR=merge
 SSH_CONNECT=not_successful
 USER=`whoami`
 SUDO_PASSWORD_REQUIRED=false
@@ -35,14 +36,12 @@ echo "******* Never enter any commands during the process!"
 echo "******* Only if you see a line beginning with *INPUT* like this:"
 echo "*INPUT* Enter the port for Jenkins to run on: (default is 8080)"
 read JENKINS_PORT
-# for debugging purposes we can assume it is y
-#LETSGO=y
 
-is_a_number=^[0-9]+$
+is_a_number=
 
 if  [ -z $JENKINS_PORT ]; then
   JENKINS_PORT=8080
-elif [! $JENKINS_PORT =~ is_a_number ]; then
+elif [[ ! $JENKINS_PORT =~ ^[0-9]+$ ]]; then
   echo "******* Not a valid port number!"
   exit 1
 fi
@@ -171,3 +170,4 @@ expect -c "
 
 # And we're done.
 echo "******* Congratulations, you're done."
+echo "******* Jenkins is now running on http://localhost:$JENKINS_PORT"
