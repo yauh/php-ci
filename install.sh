@@ -34,23 +34,23 @@ echo "******* Please note:"
 echo "******* Never enter any commands during the process!"
 echo "******* Only if you see a line beginning with *INPUT* like this:"
 echo "*INPUT* Enter the port for Jenkins to run on: (default is 8080)"
-read LETSGO
+read JENKINS_PORT
 # for debugging purposes we can assume it is y
 #LETSGO=y
 
-
+is_a_number=^[0-9]+$
 
 if  [ -z $JENKINS_PORT ]; then
   JENKINS_PORT=8080
-elif [ $JENKINS_PORT =~ ^[0-9]+$ ]; then
-    echo "******* Not a valid port number!"
-    exit 1
+elif [! $JENKINS_PORT =~ is_a_number ]; then
+  echo "******* Not a valid port number!"
+  exit 1
 fi
 echo "******* Jenkins will be listening on port $JENKINS_PORT"
 
 echo "******* Let's go and let me check the prerequisites"
 echo "*INPUT* But first please enter your user password"
-read USER_PASSWD
+read -s USER_PASSWD
 
 # Install ssh software on a minimal system
 echo "******* First we make sure some essential software is installed"
