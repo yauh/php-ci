@@ -33,9 +33,7 @@ else
 fi
 echo "******* Please note:"
 echo "******* Never enter any commands during the process!"
-echo "******* Only if you see a line beginning with *INPUT* like this:"
-echo "*INPUT* Enter the port for Jenkins to run on: (default is 8080)"
-read JENKINS_PORT
+read -p "Enter the port for Jenkins to run on (default is 8080): " JENKINS_PORT
 
 is_a_number=
 
@@ -48,8 +46,8 @@ fi
 echo "******* Jenkins will be listening on port $JENKINS_PORT"
 
 echo "******* Let's go and let me check the prerequisites"
-echo "*INPUT* But first please enter your user password"
-read -s USER_PASSWD
+read -p "But first please enter your user password: " -s USER_PASSWD
+echo ""
 
 # Install ssh software on a minimal system
 echo "******* First we make sure some essential software is installed"
