@@ -1,7 +1,7 @@
 #!/bin/bash
 # install.sh is used to bootstrap the php-ci environment on a single machine
 # Author: Stephan Hochhaus <stephan@yauh.de>
-# Link: https://github.com/perlmonkey/php-ci
+# Link: https://github.com/yauh/php-ci
 #
 # This script requires
 # * freshly installed Debian Wheezy 7.x
@@ -111,8 +111,8 @@ fi
 # clone the php-ci repository to /tmp or git pull if already present
 rm -Rf /tmp/php-ci
 cd /tmp
-echo "******* Cloning into perlmonkey/php-ci"
-git clone https://github.com/perlmonkey/php-ci.git > /dev/null 2>&1 
+echo "******* Cloning into yauh/php-ci"
+git clone https://github.com/yauh/php-ci.git > /dev/null 2>&1 
 cd /tmp/php-ci
 git submodule init && git submodule update
 
