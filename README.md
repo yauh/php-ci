@@ -42,7 +42,7 @@ Simple setup
 Copy the file `install.sh` to your Debian machine. Log into your Debian/Ubuntu machine that is going to be the PHP server and start the deployment with the following commands
 
 ```
-$ wget https://raw.github.com/perlmonkey/php-ci/master/install.sh
+$ wget https://raw.github.com/yauh/php-ci/master/install.sh
 $ /bin/bash install.sh
 ```
 
@@ -60,7 +60,7 @@ Advanced setup
 Since the individual roles are used as submodules make sure you check them out correctly, e.g. like this:
 
 ```
-$ git clone https://github.com/perlmonkey/php-ci.git
+$ git clone https://github.com/yauh/php-ci.git
 $ cd php-ci
 $ git submodule init && git submodule update
 
@@ -165,7 +165,7 @@ Roles
 
 ### role-jenkins-php
 * Deploys Jenkins CI with required PHP tools as pear modules
-* It also sets up [a demonstration job](https://github.com/perlmonkey/yii-sample-project) using the yii framework
+* It also sets up [a demonstration job](https://github.com/yauh/yii-sample-project) using the yii framework
 * can be invoked separately using the `--tags="php-ci"` attribute to the playbook command
 
 ### role-lamp
