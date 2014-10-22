@@ -39,18 +39,19 @@ It helps to have some familiarity with the linux command line. Otherwise just do
 
 Simple setup
 ------------
-Copy the file `install.sh` to your Debian machine. Log into your Debian/Ubuntu machine that is going to be the PHP server and start the deployment with the following commands
+Copy the file `install.sh` to your Debian/Ubuntu machine. Log into your machine that is going to be the PHP server and start the deployment with the following commands
 
 ```
 $ wget https://raw.github.com/yauh/php-ci/master/install.sh
-$ /bin/bash install.sh
+$ sudo /bin/bash install.sh
 ```
 
-The script asks you to enter _y_ if you really wish to continue. Then you must provide your user password that enables the connection.
+The script asks you to enter the port where the Jenkins CI instance is supposed to listen on. The default is 8080. You may set it to anything else, but not 80 as that is already used by the Apache that comes with the automated installation.
+Then you must provide your user password that enables the connection.
 
 Now sit back and wait a while, the script first bootstraps [Ansible](http://www.ansibleworks.com/) on your machine and then installs [a LAMP stack](http://stackoverflow.com/questions/10060285/what-is-a-lamp-stack) plus the [Jenkins-CI](http://jenkins-php.org/) with a template for PHP projects (optimized slightly for use with [Yii](http://www.yiiframework.com/)).
 
-Also you can watch me [perform a simple setup on Youtube](https://www.youtube.com/watch?v=MPjR4mgh_E0).
+Also you can watch me [perform a simple setup on Youtube](https://www.youtube.com/watch?v=MPjR4mgh_E0). (Beware, the video is a bit outdated even though the principle is still the same!)
 
 Advanced setup
 --------------
